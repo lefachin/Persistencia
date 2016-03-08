@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="/home/rafael/git/Persistencia/Persistencia/lib/required/javassist-3.20.0-GA.jar"/>
 	<classpathentry kind="lib" path="/home/rafael/git/Persistencia/Persistencia/lib/required/jboss-logging-3.3.0.Final.jar"/>
 	<classpathentry kind="lib" path="/home/rafael/git/Persistencia/Persistencia/lib/mysql-connector-java-5.1.38-bin.jar"/>
+	<classpathentry kind="lib" path="/home/rafael/git/Persistencia/Persistencia/lib/lombok.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
