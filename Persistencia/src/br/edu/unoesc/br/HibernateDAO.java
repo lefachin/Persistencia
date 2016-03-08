@@ -14,12 +14,14 @@ public class HibernateDAO<T> implements GenericDAO<T>{
 	public EntityTransaction et;
 	private static HibernateDAO hb;
 	
+	//Conecta com o Hibernate
 public void conecta(){
 	this.factory = Persistence.createEntityManagerFactory("Tarefa");
 	this.em = this.factory.createEntityManager();
 	this.et = this.em.getTransaction();
 }
 
+//Retorna a propria instancia
 public static HibernateDAO getDAO(){
 	if (hb == null){
 		hb = new HibernateDAO();
@@ -27,7 +29,7 @@ public static HibernateDAO getDAO(){
 	return hb;
 }
 
-	
+	//Insere qualquer unidade, tem que testar com outras unidades, com Tarefa funciona
 @Override
 public void inserir(Object entidade) {
 conecta();
@@ -47,6 +49,7 @@ conecta();
 		}
 }
 
+//Altera qualquer unidade, tem que testar com outras unidades, com Tarefa funciona.
 @Override
 public void alterar(Object entidade) {
 	conecta();
@@ -67,6 +70,7 @@ public void alterar(Object entidade) {
 	
 }
 
+//Exclui a entidade, mas esse nao funciona, nao sei o por que.
 @Override
 public void excluir(Object entidade) {
 	conecta();
@@ -88,6 +92,7 @@ public void excluir(Object entidade) {
 	
 }
 
+//Retorna com base no ID o objeto do banco, funciona com Tarefa.
 @Override
 public Object buscar(Object entidade, Long id) {	
 	conecta();
@@ -108,6 +113,7 @@ public Object buscar(Object entidade, Long id) {
 		}
 }
 
+//Retorna todas as Tarefas.
 @Override
 public List<Tarefa> todos() {
 	this.conecta();

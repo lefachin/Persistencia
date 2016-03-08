@@ -2,6 +2,7 @@ package br.edu.unoesc.br;
 
 import java.util.List;
 
+//GenericDAO 
 public interface GenericDAO<T> {
 
 	void inserir(T entidade);
