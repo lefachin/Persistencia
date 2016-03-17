@@ -2,16 +2,18 @@ package br.edu.unoesc.br;
 
 import java.util.List;
 
-//GenericDAO 
-public interface GenericDAO<T> {
+import br.edu.unoesc.br.execption.DAOException;
 
-	void inserir(T entidade);
+//GenericDAO 
+public interface GenericDAO<T extends MinhaEntidade> {
 	
-	void alterar(T entidade);
+	void salvar (T entidade) throws DAOException;
 	
-	void excluir(T entidade);
+	void excluir(T entidade) throws DAOException;
 	
-	T buscar(T entidade, Long id);
+	T buscar(Class<T> classe, Long id);
+	
+	List<T> buscar (Class<T> classe, String str);
 	
 	List<Tarefa> todos();
 	

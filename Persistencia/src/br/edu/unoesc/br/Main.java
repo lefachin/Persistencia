@@ -13,6 +13,23 @@ lista.forEach(tarefa->{
 	System.out.println(tarefa.getDescricao());
 });
 		
-}
+Tarefa opa = new Tarefa();
+opa.setDescricao("VAMO");
+opa.setId(0L);
 
+Tarefa tar = (Tarefa) HibernateDAO.getDAO().buscar(Tarefa.class, 5L);
+System.out.println(tar.getDescricao());	
+
+List<Tarefa> lista2 = HibernateDAO.getDAO().buscar(Tarefa.class,  "teste");
+lista2.forEach(tarefa->{
+System.out.println(tarefa.getDescricao());
+});
+	
+	
+	
+	
+	
+
+}
+	
 }

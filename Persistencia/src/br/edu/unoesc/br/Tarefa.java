@@ -17,13 +17,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of="descricao")
-public class Tarefa {
+public class Tarefa implements MinhaEntidade{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String descricao;
 
-	
-	
+	@Override
+	public Long getCodigo(){
+		return id;
+	}
 }

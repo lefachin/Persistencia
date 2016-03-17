@@ -6,8 +6,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 
-public class HibernateDAO<T> implements GenericDAO<T>{
+import br.edu.unoesc.br.execption.DAOException;
+
+public class HibernateDAO<T extends MinhaEntidade> implements GenericDAO<T>{
 	
 	public EntityManagerFactory factory;
 	public EntityManager em;
@@ -29,61 +33,31 @@ public static HibernateDAO getDAO(){
 	return hb;
 }
 
-	//Insere qualquer unidade, tem que testar com outras unidades, com Tarefa funciona
-@Override
-public void inserir(Object entidade) {
-conecta();
-	try{
-		this.et.begin();
-		this.em.persist(entidade);
-		this.et.commit();
-		System.out.println("SALVO");
-		}
-		catch(Exception E){
-			this.et.rollback();
-			System.out.println("ERRO");
-		}
-		finally {
-			this.em.close();
-			this.factory.close();
-		}
+
+public void finaliza(){
+	this.em.close();
+	this.factory.close();
 }
 
-//Altera qualquer unidade, tem que testar com outras unidades, com Tarefa funciona.
-@Override
-public void alterar(Object entidade) {
-	conecta();
-	try{
-		this.et.begin();
-		this.em.merge(entidade);
-		this.et.commit();
-		System.out.println("SALVO");
-		}
-		catch(Exception E){
-			this.et.rollback();
-			System.out.println("ERRO");
-		}
-		finally {
-			this.em.close();
-			this.factory.close();
-		}
-	
-}
 
-//Exclui a entidade, mas esse nao funciona, nao sei o por que.
-@Override
-public void excluir(Object entidade) {
+public void salvar (T entidade) throws DAOException{
 	conecta();
 	try{
 		this.et.begin();
 		
-		this.em.remove(entidade);
-		this.et.commit();
-		System.out.println("SALVO");
+		if (entidade.getCodigo() == null){
+			this.em.persist(entidade);
 		}
-		catch(Exception E){
-			this.et.rollback();
-			System.out.println("ERRO");
+		else {
+			this.em.merge(entidade);	
+		}
+		this.et.commit();
+		}
+		catch(PersistenceException E){
+			if (et.isActive()){
+				et.rollback();
+			}
+			throw new DAOException("Erro ao Salvar", E.getCause());
 		}
 		finally {
 			this.em.close();
@@ -92,20 +66,36 @@ public void excluir(Object entidade) {
 	
 }
 
-//Retorna com base no ID o objeto do banco, funciona com Tarefa.
+
+//Exclui a entidade, mas esse nao funciona, nao sei o por que.
 @Override
-public Object buscar(Object entidade, Long id) {	
+public void excluir(T entidade) throws DAOException{
 	conecta();
 	try{
 		this.et.begin();
-		Object ojb = this.em.find(entidade.getClass(), id);
-		this.et.commit();
-		return ojb;
+		
+		Object opa = em.find(entidade.getClass(), entidade.getCodigo());
+		em.remove(opa);
+	}
+
+		catch(PersistenceException E){
+			if (et.isActive()){
+				et.rollback();
+			}
+			throw new DAOException("Erro ao Salvar", E.getCause());
 		}
-		catch(Exception E){
-			this.et.rollback();
-			System.out.println("ERRO BUSCAR");
-			return null;
+		finally {
+			this.em.close();
+			this.factory.close();
+		}
+}
+
+//Retorna com base no ID o objeto do banco, funciona com Tarefa.
+@Override
+public T buscar(Class<T> classe, Long id) {	
+	conecta();
+	try{
+		return em.find(classe, id);
 		}
 		finally {
 			this.em.close();
@@ -117,6 +107,37 @@ public Object buscar(Object entidade, Long id) {
 @Override
 public List<Tarefa> todos() {
 	this.conecta();
-    return em.createQuery("FROM " + Tarefa.class.getName()).getResultList();	
+    try{
+    	return em.createQuery("FROM " + Tarefa.class.getName()).getResultList();	
+    }
+    finally{
+    	this.finaliza();
+    }
+	
+    
 }
+
+@Override
+public List<T> buscar(Class<T> classe, String str) {
+	conecta();
+	try{
+		String hql = "from "+classe.getName()+" a where upper(a.descricao) like ?";
+		TypedQuery<T> query = em.createQuery(hql, classe);
+		query.setParameter(1, "%"+str.toUpperCase()+"%");
+		return query.getResultList();	
+	}
+	finally{
+		this.finaliza();
+	}
 }
+
+
+
+
+
+}
+
+
+
+
+
