@@ -17,5 +17,6 @@ public interface GenericDAO<T extends MinhaEntidade> {
 	
 	List<Tarefa> todos();
 	
+	List<T> listar(Class<T> classe);
 }
 

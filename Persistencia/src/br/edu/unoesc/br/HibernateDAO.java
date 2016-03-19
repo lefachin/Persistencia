@@ -53,11 +53,12 @@ public void salvar (T entidade) throws DAOException{
 		}
 		this.et.commit();
 		}
-		catch(PersistenceException E){
+		catch(PersistenceException Ep){
 			if (et.isActive()){
 				et.rollback();
 			}
-			throw new DAOException("Erro ao Salvar", E.getCause());
+			System.out.println(Ep.getCause());
+			throw new DAOException("Erro ao Salvar", Ep.getCause());
 		}
 		finally {
 			this.em.close();
@@ -121,14 +122,28 @@ public List<Tarefa> todos() {
 public List<T> buscar(Class<T> classe, String str) {
 	conecta();
 	try{
-		String hql = "from "+classe.getName()+" a where upper(a.descricao) like ?";
-		TypedQuery<T> query = em.createQuery(hql, classe);
+		//String hql = "from "+classe.getName()+" a where upper(a.descricao) like ?";
+		//TypedQuery<T> query = em.createQuery(hql, classe);
+		//nativeQuery = SQL PURO
+		TypedQuery<T> query = em.createNamedQuery("FILTRA_POR_DESCRICAO", classe);
 		query.setParameter(1, "%"+str.toUpperCase()+"%");
 		return query.getResultList();	
 	}
 	finally{
 		this.finaliza();
 	}
+}
+
+@Override
+public List<T> listar(Class<T> classe){
+	conecta();
+	try{
+		return em.createQuery("FROM " + classe.getName()).getResultList();
+	}
+	finally{
+		this.finaliza();
+	}
+
 }
 
 

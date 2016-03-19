@@ -1,43 +1,31 @@
-package br.edu.unoesc.br;
+package model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 
+import br.edu.unoesc.br.MinhaEntidade;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-@Entity
+import lombok.ToString;
 @Getter
 @Setter
+@ToString(of={"codigo","descricao"})
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of="descricao")
-
-@NamedQueries({
-	@NamedQuery(name=Tarefa.FILTRA_POR_DESCRICAO, 
-			query="from Tarefa a where upper(a.descricao) like ?")
-})
-
-public class Tarefa implements MinhaEntidade{
-	
-	public static final String FILTRA_POR_DESCRICAO = "FILTRA_POR_DESCRICAO";
-
-
+@Entity
+public class Formacao implements MinhaEntidade{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
+	private Long codigo;
+	@Column(nullable=false, unique=true)
 	private String descricao;
 
-	@Override
-	public Long getCodigo(){
-		return id;
-	}
 }
